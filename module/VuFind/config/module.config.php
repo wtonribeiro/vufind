@@ -102,8 +102,10 @@ $config = array(
             'missingrecord' => 'VuFind\Controller\MissingrecordController',
             'my-research' => 'VuFind\Controller\MyResearchController',
             'oai' => 'VuFind\Controller\OaiController',
-            'qrcode' => 'VuFind\Controller\QRCodeController',
             'pazpar2' => 'VuFind\Controller\Pazpar2Controller',
+            'primo' => 'VuFind\Controller\PrimoController',
+            'primorecord' => 'VuFind\Controller\PrimorecordController',
+            'qrcode' => 'VuFind\Controller\QRCodeController',
             'records' => 'VuFind\Controller\RecordsController',
             'search' => 'VuFind\Controller\SearchController',
             'summon' => 'VuFind\Controller\SummonController',
@@ -683,6 +685,14 @@ $config = array(
                             $sm->getServiceLocator()->get('VuFind\Config')->get('searches')
                         );
                     },
+                    'primo' => function ($sm) {
+                        $primo = $sm->getServiceLocator()->get('VuFind\Config')->get('Primo');
+                        $driver = new \VuFind\RecordDriver\Primo(
+                            $sm->getServiceLocator()->get('VuFind\Config')->get('config'),
+                            $primo, $primo
+                        );
+                        return $driver;
+                    },
                     'solrdefault' => function ($sm) {
                         return new \VuFind\RecordDriver\SolrDefault(
                             $sm->getServiceLocator()->get('VuFind\Config')->get('config'),
@@ -854,6 +864,7 @@ $config = array(
             'search_backend' => array(
                 'factories' => array(
                     'Pazpar2' => 'VuFind\Search\Factory\Pazpar2BackendFactory',
+                    'Primo' => 'VuFind\Search\Factory\PrimoBackendFactory',
                     'Solr' => 'VuFind\Search\Factory\SolrDefaultBackendFactory',
                     'SolrAuth' => 'VuFind\Search\Factory\SolrAuthBackendFactory',
                     'SolrReserves' => 'VuFind\Search\Factory\SolrReservesBackendFactory',
@@ -957,6 +968,15 @@ $config = array(
                  ),
                 'defaultTab' => null,
             ),
+            'VuFind\RecordDriver\Primo' => array(
+                'tabs' => array(
+                    'Description' => 'Description',
+                    'TOC' => 'TOC', 'UserComments' => 'UserComments',
+                    'Reviews' => 'Reviews', 'Excerpt' => 'Excerpt',
+                    'Details' => 'StaffViewArray',
+                ),
+                'defaultTab' => null,
+            ),
             'VuFind\RecordDriver\SolrAuth' => array(
                 'tabs' => array (
                     'Details' => 'StaffViewMARC',
@@ -1010,6 +1030,7 @@ $recordRoutes = array(
     'record' => 'Record',
     'collection' => 'Collection',
     'missingrecord' => 'MissingRecord',
+    'primorecord' => 'PrimoRecord',
     'solrauthrecord' => 'Authority',
     'summonrecord' => 'SummonRecord',
     'worldcatrecord' => 'WorldcatRecord'
@@ -1044,6 +1065,7 @@ $staticRoutes = array(
     'MyResearch/Favorites', 'MyResearch/Fines',
     'MyResearch/Holds', 'MyResearch/Home', 'MyResearch/Logout', 'MyResearch/Profile',
     'MyResearch/SaveSearch',
+    'Primo/Advanced', 'Primo/Home', 'Primo/Search',
     'QRCode/Show', 'QRCode/Unavailable',
     'OAI/Server', 'Pazpar2/Home', 'Pazpar2/Search', 'Records/Home',
     'Search/Advanced', 'Search/Email', 'Search/History', 'Search/Home',
