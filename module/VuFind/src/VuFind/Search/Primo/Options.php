@@ -38,6 +38,10 @@ namespace VuFind\Search\Primo;
  */
 class Options extends \VuFind\Search\Base\Options
 {
+
+   // Search options for the user
+    protected $advancedOperators = array();
+
     /**
      * Constructor
      *
@@ -96,6 +100,12 @@ class Options extends \VuFind\Search\Base\Options
             }
         }
 
+        if (isset($searchSettings->Advanced_Operators)) {
+            foreach ($searchSettings->Advanced_Operators as $key => $value) {
+                $this->advancedOperators[$key] = $value;
+            }
+        }
+
         // Load sort preferences:
         if (isset($searchSettings->Sorting)) {
             foreach ($searchSettings->Sorting as $key => $value) {
@@ -133,5 +143,15 @@ class Options extends \VuFind\Search\Base\Options
     public function getAdvancedSearchAction()
     {
         return 'primo-advanced';
+    }
+
+    /**
+     * Basic 'getter' for Primo advanced search operators.
+     *
+     * @return array
+     */
+    public function getAdvancedOperators()
+    {
+        return $this->advancedOperators;
     }
 }
