@@ -46,157 +46,74 @@ class Primo extends SolrDefault
     protected $dateConverter = null;
 
     /**
-     * Get all subject headings associated with this record.  Each heading is
-     * returned as an array of chunks, increasing from least specific to most
-     * specific.
+     * Get the full title of the record.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return isset($this->fields['title']) ?
+            $this->fields['title'] : '';
+    }
+ 
+    /**
+     * Get the authors of the record.
+     *
+     * @return array
+     */
+    public function getCreators()
+    {
+        return isset($this->fields['creator']) ?
+            $this->fields['creator'] : array();
+    }
+
+   /**
+     * Get an array of all subject headings associated with the record 
+     * (may be empty).
      *
      * @return array
      */
     public function getAllSubjectHeadings()
     {
-        $retval = array();
-        $topic = isset($this->fields['SubjectTerms']) ? 
-            $this->fields['SubjectTerms'] : array();
-        $temporal = isset($this->fields['TemporalSubjectTerms']) ? 
-            $this->fields['TemporalSubjectTerms'] : array();
-        $geo = isset($this->fields['GeographicLocations']) ?
-            $this->fields['GeographicLocations'] : array();
-        $key = isset($this->fields['Keywords']) ?
-            $this->fields['Keywords'] : array();
+        $subjects = array();
+        if (isset($this->fields['subjects'])) {
+            $subjects = $this->fields['subjects'];
+        }
 
-        $retval = array();
-        foreach ($topic as $t) {
-            $retval[] = array(trim($t));
-        }
-        foreach ($temporal as $t) {
-            $retval[] = array(trim($t));
-        }
-        foreach ($geo as $g) {
-            $retval[] = array(trim($g));
-        }
-        foreach ($key as $k) {
-            $retval[] = array(trim($k));
-        }
-        return $retval;
+        return $subjects;
     }
 
     /**
-     * Get notes on bibliography content.
+     * Get the item's source.
      *
      * @return array
      */
-    public function getBibliographyNotes()
+    public function getSource()
     {
-        return isset($this->fields['Notes']) ?
-            $this->fields['Notes'] : array();
+        return isset($this->fields['ispartof']) ?
+            $this->fields['ispartof'] : array();
     }
 
     /**
-     * Get the call number associated with the record (empty string if none).
-     *
-     * @return string
-     */
-    public function getCallNumber()
-    {
-        return isset($this->fields['LCCCallnum']) ?
-            $this->fields['LCCCallnum'] : '';
-    }
-
-    /**
-     * Return the first valid DOI found in the record (false if none).
-     *
-     * @return mixed
-     */
-    public function getCleanDOI()
-    {
-        return (isset($this->fields['DOI'][0]) && !empty($this->fields['DOI'][0]))
-            ? $this->fields['DOI'][0] : false;
-
-    }
-
-    /**
-     * Get the edition of the current record.
-     *
-     * @return string
-     */
-    public function getEdition()
-    {
-        return isset($this->fields['Edition']) ?
-            $this->fields['Edition'][0] : '';
-    }
-
-    /**
-     * Get an array of all the formats associated with the record.
+     * Get the item's description.
      *
      * @return array
      */
-    public function getFormats()
+    public function getDescription()
     {
-        return isset($this->fields['ContentType'])
-            ? $this->fields['ContentType'] : array();
+        return isset($this->fields['description']) ?
+            $this->fields['description'] : array();
     }
 
     /**
-     * Get a highlighted author string, if available.
-     *
-     * @return string
-     */
-    public function getHighlightedAuthor()
-    {
-        // Don't check for highlighted values if highlighting is disabled;
-        // also, don't try to highlight multi-author works, because it will
-        // cause display problems -- it's currently impossible to properly
-        // synchronize the 'Author' and 'Author_xml' lists.
-        if (!$this->highlight || count($this->fields['Author']) > 1) {
-            return '';
-        }
-        return isset($this->fields['Author']) ?
-            $this->fields['Author'][0] : '';
-    }
-
-    /**
-     * Pick one line from the highlighted text (if any) to use as a snippet.
-     *
-     * @return mixed False if no snippet found, otherwise associative array
-     * with 'snippet' and 'caption' keys.
-     */
-    public function getHighlightedSnippet()
-    {
-        return isset($this->fields['Snippet'][0])
-            ? array(
-                'snippet' => trim($this->fields['Snippet'][0], '.'),
-                'caption' => ''
-            )
-            : false;
-    }
-
-    /**
-     * Get a highlighted title string, if available.
-     *
-     * @return string
-     */
-    public function getHighlightedTitle()
-    {
-        // Don't check for highlighted values if highlighting is disabled:
-        if (!$this->highlight) {
-            return '';
-        }
-        $title = $this->getShortTitle();
-        $sub = $this->getSubtitle();
-        return empty($sub) ? $title : "{$title}: {$sub}";
-    }
-
-    /**
-     * Get an array of all ISBNs associated with the record (may be empty).
+     * Get the item's collection.
      *
      * @return array
      */
-    public function getISBNs()
+    public function getCollection()
     {
-        if (isset($this->fields['ISBN']) && is_array($this->fields['ISBN'])) {
-            return $this->fields['ISBN'];
-        }
-        return array();
+        return isset($this->fields['source']) ?
+            $this->fields['source'] : array();
     }
 
     /**
@@ -207,11 +124,8 @@ class Primo extends SolrDefault
     public function getISSNs()
     {
         $issns = array();
-        if (isset($this->fields['ISSN'])) {
-            $issns = $this->fields['ISSN'];
-        }
-        if (isset($this->fields['EISSN'])) {
-            $issns = array_merge($issns, $this->fields['EISSN']);
+        if (isset($this->fields['issn'])) {
+            $issns = $this->fields['issn'];
         }
         return $issns;
     }
@@ -223,19 +137,8 @@ class Primo extends SolrDefault
      */
     public function getLanguages()
     {
-        return isset($this->fields['Language']) ?
-            $this->fields['Language'] : array();
-    }
-
-    /**
-     * Get the OCLC number of the record.
-     *
-     * @return array
-     */
-    public function getOCLC()
-    {
-        return isset($this->fields['OCLC']) ?
-            $this->fields['OCLC'] : array();
+        return isset($this->fields['language']) ?
+            $this->fields['language'] : array();
     }
 
     /**
@@ -248,28 +151,6 @@ class Primo extends SolrDefault
     {
         return isset($this->fields['openUrl'])
             ? $this->fields['openUrl'] : parent::getOpenURL();
-    }
-
-    /**
-     * Get the item's place of publication.
-     *
-     * @return array
-     */
-    public function getPlacesOfPublication()
-    {
-        return isset($this->fields['PublicationPlace']) ?
-            $this->fields['PublicationPlace'] : array();
-    }
-
-    /**
-     * Get the main author of the record.
-     *
-     * @return string
-     */
-    public function getPrimaryAuthor()
-    {
-        return isset($this->fields['Author_xml'][0]['fullname']) ?
-            $this->fields['Author_xml'][0]['fullname'] : '';
     }
 
     /**
@@ -332,81 +213,6 @@ class Primo extends SolrDefault
     }
 
     /**
-     * Get the publishers of the record.
-     *
-     * @return array
-     */
-    public function getPublishers()
-    {
-        return isset($this->fields['Publisher']) ?
-            $this->fields['Publisher'] : array();
-    }
-
-    /**
-     * Get an array of all secondary authors (complementing getPrimaryAuthor()).
-     *
-     * @return array
-     */
-    public function getSecondaryAuthors()
-    {
-        $authors = array();
-        if (isset($this->fields['Author_xml'])) {
-            for ($i = 1; $i < count($this->fields['Author_xml']); $i++) {
-                if (isset($this->fields['Author_xml'][$i]['fullname'])) {
-                    $authors[] = $this->fields['Author_xml'][$i]['fullname'];
-                }
-            }
-        }
-        return $authors;
-    }
-
-    /**
-     * Get an array of all series names containing the record.  Array entries may
-     * be either the name string, or an associative array with 'name' and 'number'
-     * keys.
-     *
-     * @return array
-     */
-    public function getSeries()
-    {
-        return isset($this->fields['PublicationSeriesTitle'])
-            ? $this->fields['PublicationSeriesTitle']:array();
-    }
-
-    /**
-     * Get the short (pre-subtitle) title of the record.
-     *
-     * @return string
-     */
-    public function getShortTitle()
-    {
-        return isset($this->fields['Title']) ?
-            $this->fields['Title'][0] : '';
-    }
-
-    /**
-     * Get the subtitle of the record.
-     *
-     * @return string
-     */
-    public function getSubtitle()
-    {
-        return isset($this->fields['Subtitle']) ?
-            $this->fields['Subtitle'][0] : '';
-    }
-
-    /**
-     * Get an array of summary strings for the record.
-     *
-     * @return array
-     */
-    public function getSummary()
-    {
-        return isset($this->fields['Abstract']) ?
-          $this->fields['Abstract'] : array();
-    }
-
-    /**
      * Returns one of three things: a full URL to a thumbnail preview of the record
      * if an image is available in an external system; an array of parameters to
      * send to VuFind's internal cover generator if no fixed URL exists; or false
@@ -431,32 +237,6 @@ class Primo extends SolrDefault
             return $params;
         }
         return false;
-    }
-
-    /**
-     * Get the full title of the record.
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        $title = $this->getShortTitle();
-        $sub = $this->getSubtitle();
-        $title = empty($sub) ? $title : "{$title}: {$sub}";
-        return str_replace(
-            array('{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'), '', $title
-        );
-    }
-
-    /**
-     * Get an array of lines from the table of contents.
-     *
-     * @return array
-     */
-    public function getTOC()
-    {
-        return isset($this->fields['TableOfContents'])
-            ? $this->fields['TableOfContents'] : array();
     }
 
     /**
@@ -503,103 +283,5 @@ class Primo extends SolrDefault
     {
         return $this->fields['ID'][0];
     }
-    /**
-     * Get the title of the item that contains this record (i.e. MARC 773s of a
-     * journal).
-     *
-     * @return string
-     */
-    public function getContainerTitle()
-    {
-        return isset($this->fields['PublicationTitle'])
-            ? $this->fields['PublicationTitle'][0] : '';
-    }
 
-    /**
-     * Get the volume of the item that contains this record (i.e. MARC 773v of a
-     * journal).
-     *
-     * @return string
-     */
-    public function getContainerVolume()
-    {
-        return (isset($this->fields['Volume'])) ? $this->fields['Volume'][0] : '';
-    }
-
-    /**
-     * Get the issue of the item that contains this record (i.e. MARC 773l of a
-     * journal).
-     *
-     * @return string
-     */
-    public function getContainerIssue()
-    {
-        return (isset($this->fields['Issue'])) ? $this->fields['Issue'][0] : '';
-    }
-
-    /**
-     * Get the start page of the item that contains this record (i.e. MARC 773q of a
-     * journal).
-     *
-     * @return string
-     */
-    public function getContainerStartPage()
-    {
-        return (isset($this->fields['StartPage']))
-            ? $this->fields['StartPage'][0] : '';
-    }
-
-    /**
-     * Get the end page of the item that contains this record.
-     *
-     * @return string
-     */
-    public function getContainerEndPage()
-    {
-        if (isset($this->fields['EndPage'])) {
-            return $this->fields['EndPage'][0];
-        } else if (isset($this->fields['PageCount'])) {
-            return $this->fields['StartPage'][0] + $this->fields['PageCount'][0] - 1;
-        }
-        return $this->getContainerStartPage();
-    }
-
-    /**
-     * Get a full, free-form reference to the context of the item that contains this
-     * record (i.e. volume, year, issue, pages).
-     *
-     * @return string
-     */
-    public function getContainerReference()
-    {
-        $str = '';
-        $vol = $this->getContainerVolume();
-        if (!empty($vol)) {
-            $str .= $this->translate('citation_volume_abbrev')
-                . ' ' . $vol;
-        }
-        $no = $this->getContainerIssue();
-        if (!empty($no)) {
-            if (strlen($str) > 0) {
-                $str .= '; ';
-            }
-            $str .= $this->translate('citation_issue_abbrev')
-                . ' ' . $no;
-        }
-        $start = $this->getContainerStartPage();
-        if (!empty($start)) {
-            if (strlen($str) > 0) {
-                $str .= '; ';
-            }
-            $end = $this->getContainerEndPage();
-            if ($start == $end) {
-                $str .= $this->translate('citation_singlepage_abbrev')
-                    . ' ' . $start;
-            } else {
-                $str .= $this->translate('citation_multipage_abbrev')
-                    . ' ' . $start . ' - ' . $end;
-            }
-        }
-        return $str;
-    }
 }

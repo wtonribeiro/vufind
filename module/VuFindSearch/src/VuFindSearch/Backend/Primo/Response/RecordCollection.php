@@ -79,8 +79,8 @@ class RecordCollection extends AbstractRecordCollection
      */
     public function getFacets()
     {
-        return isset($this->response['facetFields'])
-            ? $this->response['facetFields'] : array();
+        return isset($this->response['facets'])
+            ? $this->response['facets'] : array();
     }
 
     /**

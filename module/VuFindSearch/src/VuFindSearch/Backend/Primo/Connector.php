@@ -73,7 +73,7 @@ class Connector
      */
     //TODO: do we need this? apiId goes in web/conf/conf.ini [Primo]; is passed to constructor
     //private $_config;
-
+    public $debug = true;
     /**
      * Constructor
      *
@@ -206,6 +206,11 @@ class Connector
         //   multiple querystring parameters with the same key.
         $qs = array();
 
+$handle = fopen('/usr/local/gitPrimo/vufind/tester3.txt', 'w');
+fputs($handle, print_r($terms, true));
+fputs($handle, print_r($args, true));
+fclose($handle);
+
         // QUERYSTRING: query (search terms)
         // re: phrase searches, turns out we can just pass whatever we got
         //   to primo and they will interpret it correctly.
@@ -315,6 +320,11 @@ class Connector
             // QUERYSTRING: loc
             // all primocentral queries need this
             $qs[] = "loc=adaptor,primo_central_multiple_fe";
+
+            if ($this->debug) {
+                print "URL: " . implode('&', $qs);
+
+            }
 
             // Send Request
             $result = $this->_call(implode('&', $qs));

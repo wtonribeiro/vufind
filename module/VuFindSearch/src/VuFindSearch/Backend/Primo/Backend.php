@@ -107,7 +107,15 @@ class Backend extends AbstractBackend
         $primoQuery = $this->paramBagToPrimoQuery($baseParams);
         var_dump($primoQuery);
         try {
-            $response = $this->connector->query($primoQuery['institution'], $primoQuery['query'], $primoQuery);
+            // The Primo query must be passed in as an array of arrays
+            // because for the Advanced search there will be multiple lookfor
+            // variables and indexes. The parser tries to account for this 
+            // using one foreach loop.
+            // Hack it for now
+            $thisQuery = array();
+            $thisQuery[] = $primoQuery['query'];
+
+            $response = $this->connector->query($primoQuery['institution'], $thisQuery, $primoQuery);
         } catch (\Exception $e) {
             throw new BackendException(
                 $e->getMessage(),
