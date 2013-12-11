@@ -102,8 +102,15 @@ class QueryBuilder
      */
     protected function queryGroupToArray(QueryGroup $query)
     {
-        // TODO
-        throw new \Exception('Advanced query not supported yet');
+        $nextLevel = $query->getQueries();
+        $parts = array();
+        foreach ($nextLevel[0]->getQueries() as $q) {
+            $index = $q->getHandler();
+            $op = $q->getOperator();
+            $lookfor = $q->getString();
+            $parts[] = compact('index', 'op', 'lookfor');
+        }
+        return $parts;
     }
 
     /**
@@ -118,6 +125,6 @@ class QueryBuilder
         // Clean and validate input:
         $index = $query->getHandler();
         $lookfor = $query->getString();
-        return compact('index', 'lookfor');
+        return array(compact('index', 'lookfor'));
     }
 }

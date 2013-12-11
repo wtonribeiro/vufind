@@ -249,7 +249,7 @@ fclose($handle);
             $lookfor = preg_replace('/,/', '+', $thisTerm['lookfor']);
 
             //set precision
-            if (array_key_exists('op', $thisTerm)){
+            if (array_key_exists('op', $thisTerm) && !empty($thisTerm['op'])) {
                 $precision = $thisTerm['op'];
             }
           
