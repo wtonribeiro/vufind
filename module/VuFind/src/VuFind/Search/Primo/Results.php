@@ -99,24 +99,24 @@ class Results extends \VuFind\Search\Base\Results
         // We want to sort the facets to match the order in the .ini file.  Let's
         // create a lookup array to determine order:
         $order = array_flip(array_keys($filter));
-
         // Loop through the facets returned by Summon.
         $facetResult = array();
         if (is_array($this->responseFacets)) {
             foreach ($this->responseFacets as $field => $current) {
-
-                $field = $current['displayName'];
-
-                // Is this one of the fields we want to display?  If so, do work...
-        $handle = fopen('/usr/local/gitPrimo/vufind/tester4.txt', 'w');
-fputs($handle, print_r(isset($filter[$field]), true));
-fclose($handle);
                 if (isset($filter[$field])) {
+                    $new = array();
+                    foreach ($current as $value => $count) {
+                        $new[] = array(
+                            'value' => $value, 'displayText' => $value,
+                            'isApplied' => false, 'operator' => 'AND',
+                            'count' => $count
+                        );
+                    }
                     // Basic reformatting of the data:
-                    $current = $this->formatFacetData($current);
+                    $current = array('list' => $new);
 
                     // Inject label from configuration:
-                    $current['label'] = $filter[$field];
+                    $current['label'] = $current['displayName'] = $filter[$field];
 
                     // Put the current facet cluster in order based on the .ini
                     // settings, then override the display name again using .ini
