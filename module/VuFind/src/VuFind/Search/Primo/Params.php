@@ -58,8 +58,6 @@ class Params extends \VuFind\Search\Base\Params
 
         $backendParams->set('didYouMean', $options->spellcheckEnabled());
 
-        $backendParams->set('institution', $options->getInstitutionCode());
-
         if ($options->highlightEnabled()) {
             $backendParams->set('highlight', true);
             $backendParams->set('highlightStart', '{{{{START_HILITE}}}}');

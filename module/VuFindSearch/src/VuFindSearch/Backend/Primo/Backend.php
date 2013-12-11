@@ -115,7 +115,9 @@ class Backend extends AbstractBackend
             $thisQuery = array();
             $thisQuery[] = $primoQuery['query'];
 
-            $response = $this->connector->query($primoQuery['institution'], $thisQuery, $primoQuery);
+            $response = $this->connector->query(
+                $this->connector->getInstitutionCode(), $thisQuery, $primoQuery
+            );
         } catch (\Exception $e) {
             throw new BackendException(
                 $e->getMessage(),
@@ -139,7 +141,8 @@ class Backend extends AbstractBackend
     public function retrieve($id, ParamBag $params = null)
     {
         try {
-            $response   = $this->connector->getRecord($id);
+            $response   = $this->connector
+                ->getRecord($id, $this->connector->getInstitutionCode());
         } catch (\Exception $e) {
             throw new BackendException(
                 $e->getMessage(),

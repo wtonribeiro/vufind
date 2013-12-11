@@ -559,7 +559,7 @@ fclose($handle);
      * @return string    The requested resource
      * @access public
      */
-    public function getRecord($recordId, $inst_code)
+    public function getRecord($recordId, $inst_code = null)
     {
         // Query String Parameters
         if(isset($recordId)){ 
@@ -579,5 +579,33 @@ fclose($handle);
         }
  
         return $result;
+    }
+
+    /**
+     * Get the institution code based on user IP. If user is coming from
+     * off campus return 
+     *
+     * @return string
+     * @access public
+     */
+    public function getInstitutionCode()
+    {
+        // TODO: make generic
+     	$school_ips = array('165.106'=>'BRYNM',
+                                '165.82.'=>'HAVERF',
+                                '130.58.'=>'SWARTH');
+    
+    	$ip = substr($_SERVER['REMOTE_ADDR'],0,7);
+    
+    	$inst = 'OFFCMP';
+    
+            //FOR TESTING OFF CAMPUS
+            $inst = 'SWARTH';
+    
+    	if (isset($school_ips[$ip])) {
+    	    $inst = $school_ips[$ip];
+    	}
+    	
+    	return $inst;
     }
 }
