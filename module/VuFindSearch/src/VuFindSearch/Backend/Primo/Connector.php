@@ -288,13 +288,12 @@ fclose($handle);
             //     range facet control in the interface. look for injectPubDate
             if (!empty($args["filterList"])) {
 		foreach ($args["filterList"] as $facet => $values) {
-		    foreach($values as $key => $value){
-                       $thisValue = $value["value"];
+		    foreach($values as $value){
                        //if($value["field"] == 'creator' || $value["field"] == 'topic'){
-	               $thisValue = preg_replace('/,/', '+', $value["value"]);
+	               $thisValue = preg_replace('/,/', '+', $value);
                        //}
 
-                       $qs[] = "query=facet_" . $value["field"] . ",exact," . urlencode($thisValue);
+                       $qs[] = "query=facet_" . $facet . ",exact," . urlencode($thisValue);
 		    }
                 }
             }

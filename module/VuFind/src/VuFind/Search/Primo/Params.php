@@ -63,21 +63,10 @@ class Params extends \VuFind\Search\Base\Params
             $backendParams->set('highlightStart', '{{{{START_HILITE}}}}');
             $backendParams->set('highlightEnd', '{{{{END_HILITE}}}}');
         }
-        $backendParams->set('facets', $this->getBackendFacetParameters());
+        $backendParams->set('filterList', $this->filterList);
         $this->createBackendFilterParameters($backendParams);
 
         return $backendParams;
-    }
-
-    /**
-     * Set up facets based on VuFind settings.
-     *
-     * @return array
-     */
-    protected function getBackendFacetParameters()
-    {
-        // TODO
-        return array();
     }
 
     /**

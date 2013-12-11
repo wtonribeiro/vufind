@@ -236,7 +236,7 @@ class Backend extends AbstractBackend
         $options = array();
         // Most parameters need to be flattened from array format, but a few
         // should remain as arrays:
-        $arraySettings = array('query', 'facets', 'filters', 'groupFilters', 'rangeFilters');
+        $arraySettings = array('query', 'facets', 'filterList', 'groupFilters', 'rangeFilters');
         foreach ($params as $key => $param) {
             $options[$key] = in_array($key, $arraySettings) ? $param : $param[0];
         }
