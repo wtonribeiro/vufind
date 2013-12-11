@@ -103,11 +103,15 @@ class Results extends \VuFind\Search\Base\Results
         $facetResult = array();
         if (is_array($this->responseFacets)) {
             foreach ($this->responseFacets as $field => $current) {
+                $translate
+                    = in_array($field, $this->getOptions()->getTranslatedFacets());
                 if (isset($filter[$field])) {
                     $new = array();
                     foreach ($current as $value => $count) {
                         $new[] = array(
-                            'value' => $value, 'displayText' => $value,
+                            'value' => $value,
+                            'displayText' =>
+                                $translate ? $this->translate($value) : $value,
                             'isApplied' =>
                                 $this->getParams()->hasFilter("$field:".$value),
                             'operator' => 'AND', 'count' => $count
