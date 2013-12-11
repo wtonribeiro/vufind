@@ -138,7 +138,7 @@ class Primo extends SolrDefault
     public function getLanguages()
     {
         return isset($this->fields['language']) ?
-            $this->fields['language'] : array();
+            (array)$this->fields['language'] : array();
     }
 
     /**
