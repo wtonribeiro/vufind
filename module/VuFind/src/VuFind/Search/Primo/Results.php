@@ -108,8 +108,9 @@ class Results extends \VuFind\Search\Base\Results
                     foreach ($current as $value => $count) {
                         $new[] = array(
                             'value' => $value, 'displayText' => $value,
-                            'isApplied' => false, 'operator' => 'AND',
-                            'count' => $count
+                            'isApplied' =>
+                                $this->getParams()->hasFilter("$field:".$value),
+                            'operator' => 'AND', 'count' => $count
                         );
                     }
                     // Basic reformatting of the data:
