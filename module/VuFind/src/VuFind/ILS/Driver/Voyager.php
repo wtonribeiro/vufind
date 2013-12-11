@@ -987,12 +987,10 @@ class Voyager extends AbstractBase implements TranslatorAwareInterface
                "lower(PATRON_BARCODE.PATRON_BARCODE) = :barcode";
         try {
             $sqlStmt = $this->db->prepare($sql);
-            $sqlStmt->bindParam(
-                ':login', strtolower(utf8_decode($login)), PDO::PARAM_STR
-            );
-            $sqlStmt->bindParam(
-                ':barcode', strtolower(utf8_decode($barcode)), PDO::PARAM_STR
-            );
+            $bindLogin = strtolower(utf8_decode($login));
+            $sqlStmt->bindParam(':login', $bindLogin, PDO::PARAM_STR);
+            $bindBarcode = strtolower(utf8_decode($barcode));
+            $sqlStmt->bindParam(':barcode', $bindBarcode, PDO::PARAM_STR);
             $sqlStmt->execute();
             $row = $sqlStmt->fetch(PDO::FETCH_ASSOC);
             if (isset($row['PATRON_ID']) && ($row['PATRON_ID'] != '')) {
@@ -1849,7 +1847,6 @@ class Voyager extends AbstractBase implements TranslatorAwareInterface
     public function findReserves($course, $inst, $dept)
     {
         $recordList = array();
-
         $reserveWhere = array();
         $bindParams = array();
 

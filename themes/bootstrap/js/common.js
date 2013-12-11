@@ -41,11 +41,11 @@ function deparam(url) {
 
 function moreFacets(id) {
   $('.'+id).removeClass('hidden');
-  $('#more'+id).addClass('hidden');
+  $('#more-'+id).addClass('hidden');
 }
 function lessFacets(id) {
   $('.'+id).addClass('hidden');
-  $('#more'+id).removeClass('hidden');
+  $('#more-'+id).removeClass('hidden');
 }
 
 // Advanced facets
@@ -56,15 +56,8 @@ function updateOrFacets(url, op) {
   list.html(header[0].outerHTML+'<div class="alert alert-info">'+vufindString.loading+'...</div>');
 }
 function setupOrFacets() {
-  var facets = $('.facetOR');
-  for(var i=0;i<facets.length;i++) {
-    var $facet = $(facets[i]);
-    if($facet.hasClass('applied')) {
-      $facet.find('span:not(.pull-right)').prepend('<input type="checkbox" checked onChange="updateOrFacets($(this).parent().parent().attr(\'href\'), this)"/>');
-    } else {
-      $facet.find('a.main').prepend('<input type="checkbox" onChange="updateOrFacets($(this).parent().attr(\'href\'), this)"/> ');
-    }
-  }
+  $('.facetOR').find('.icon-check').replaceWith('<input type="checkbox" checked onChange="updateOrFacets($(this).parent().parent().attr(\'href\'), this)"/>');
+  $('.facetOR').find('.icon-check-empty').replaceWith('<input type="checkbox" onChange="updateOrFacets($(this).parent().attr(\'href\'), this)"/> ');
 }
 
 $(document).ready(function() {
@@ -148,6 +141,9 @@ $(document).ready(function() {
     $("link[media='print']").attr("media", "all");
     window.print();
   }
+    
+  // Collapsing facets
+  $('.sidebar .collapsed .nav-header').click(function(){$(this).parent().toggleClass('open');});
   
   // Advanced facets
   setupOrFacets();

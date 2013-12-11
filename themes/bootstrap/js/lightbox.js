@@ -3,6 +3,7 @@
 var lastLightboxURL,lastLightboxPOST; // Replacement for empty form actions
 var lightboxShown = false; // is the lightbox deployed?
 var modalXHR; // Used for current in-progress XHR lightbox request
+var callbackStack = [];
 
 /**********************************/
 /* ====== LIGHTBOX ACTIONS ====== */
@@ -19,11 +20,15 @@ function changeModalContent(html) {
   $('#modal .modal-body').html(html).modal({'show':true,'backdrop':false});
 }
 // Close the lightbox and run update functions
+var closeAction = false;
 function closeLightbox() {
-  lightboxShown = false;
+  if(closeAction !== false) {
+    closeAction();
+  }
   $('#modal').modal('hide');
 }
 function closeLightboxActions() {
+  lightboxShown = false;
   if(modalXHR) {
     modalXHR.abort();
   }
@@ -35,13 +40,17 @@ function closeLightboxActions() {
   if(checkSaveStatuses) {
     checkSaveStatuses();
   }
-  
+  // Record updates
+  var recordId = $('#record_id').val();
+  var recordSource = $('.hiddenSource').val();
+  // Perform checks to update the page
+  if(typeof refreshCommentList === 'function') {
+    refreshCommentList(recordId, recordSource);
+  }
   // Update tag list
   var tagList = $('#tagList');
   if (tagList.length > 0) {
       tagList.empty();
-      var recordId = $('#record_id').val();
-      var recordSource = $('.hiddenSource').val();
       var url = path + '/AJAX/JSON?' + $.param({method:'getRecordTags',id:recordId,'source':recordSource});
       $.ajax({
         dataType: 'json',
@@ -85,6 +94,7 @@ function displayLightboxError(message) {
   } else {
     $('#modal .modal-body').prepend('<div class="alert alert-error">'+message+'</div>');
   }
+  $('.icon-spinner').remove();
 }
 
 /****************************/
@@ -93,7 +103,11 @@ function displayLightboxError(message) {
 // AJAX the content and put it into a lightbox
 // Callback if necessary
 function getLightboxByUrl(url, post, callback) {
-  if(!lightboxShown) {
+  if(typeof callback !== "undefined") {
+    //console.log("Push:",callback);
+    callbackStack.push(callback);
+  }
+  if(lightboxShown === false) {
     $('#modal').modal('show');
     lightboxShown = true;
   }
@@ -103,14 +117,16 @@ function getLightboxByUrl(url, post, callback) {
     data:post,
     success:function(html) {
       // Check for a flash message error
-      if(typeof callback === "function" && html.indexOf("alert-error") == -1) {
+      if(callbackStack.length > 0 && html.indexOf("alert-error") == -1) {
+        var callback = callbackStack.pop();
+        //console.log("Pop:",callback);
         callback(html);
       } else {
         changeModalContent(html);
       }
     },
     error:function(d,e) {
-      console.log(d,e);
+      console.log(url,e,d);
     }
   });
   lastLightboxURL = url;
@@ -133,7 +149,12 @@ function getLightbox(controller, action, get, post, callback) {
 function ajaxSubmit($form, callback) {
   // Default callback is to close
   if(!callback) {
-    callback = closeLightbox;
+    if(callbackStack.length > 0) {
+      callback = callbackStack.pop();
+      //console.log("Pop:",callback);
+    } else {
+      callback = closeLightbox;
+    }
   }
   // Gather all the data
   var inputs = $form.find('*[name]');
@@ -215,14 +236,6 @@ function ajaxLogin(form) {
           data: {username:username, password:password},
           success: function(response) {
             if (response.status == 'OK') {
-              // If summon, reload
-              $('.hiddenSource').each(function(i, e) {
-                if(e.value == 'Summon') {
-                  document.location.reload(true);
-                  return;
-                }
-              });
-              
               // Hide "log in" options and show "log out" options:
               $('#loginOptions').hide();
               $('.logoutOptions').show();
@@ -258,9 +271,19 @@ function ajaxLogin(form) {
               }
 
               // and we update the modal
-              if(lastLightboxPOST && lastLightboxPOST['loggingin']) {
+              if(callbackStack.length > 0) {
+                var callback = callbackStack.pop();
+                //console.log("Pop:",callback);
+                callback();
+              } else if(lastLightboxPOST && lastLightboxPOST['loggingin']) {
                 closeLightbox();
               } else {
+                // If summon, queue reload
+                $('.hiddenSource').each(function(i, e) {
+                  if(e.value == 'Summon') {
+                    closeAction = function(){document.location.reload(true);};
+                  }
+                });
                 getLightboxByUrl(lastLightboxURL, lastLightboxPOST);
               }
             } else {
@@ -333,7 +356,9 @@ function registerModalEvents(modal) {
     $(this).attr("clicked", "true");
   });
   $(modal).find("form").submit(function() {
-    $(this).find('*[clicked="true"]').after(' <i class="icon-spinner icon-spin"></i> ');
+    if($(this).find('.icon-spinner').length == 0) {
+      $(this).find('*[clicked="true"]').after(' <i class="icon-spinner icon-spin"></i> ');
+    }
 });
 }
 // Prevent forms from submitting in the lightbox
@@ -396,7 +421,8 @@ $(document).ready(function() {
   // Tag lightbox
   $('#tagRecord').click(function() {
     var id = $('.hiddenId')[0].value;
-    return getLightbox('Record', 'AddTag', {id:id});
+    var parts = this.href.split('/');
+    return getLightbox(parts[parts.length-3], 'AddTag', {id:id});
   });
   // Modal title
   $('.modal-link,.help-link').click(function() {
