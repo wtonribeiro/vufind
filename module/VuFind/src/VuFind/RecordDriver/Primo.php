@@ -281,7 +281,7 @@ class Primo extends SolrDefault
      */
     public function getUniqueID()
     {
-        return $this->fields['ID'][0];
+        return $this->fields['recordid'];
     }
 
 }
