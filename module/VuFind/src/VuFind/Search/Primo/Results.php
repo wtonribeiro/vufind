@@ -99,7 +99,7 @@ class Results extends \VuFind\Search\Base\Results
         // We want to sort the facets to match the order in the .ini file.  Let's
         // create a lookup array to determine order:
         $order = array_flip(array_keys($filter));
-        // Loop through the facets returned by Summon.
+        // Loop through the facets returned by Primo.
         $facetResult = array();
         if (is_array($this->responseFacets)) {
             foreach ($this->responseFacets as $field => $current) {
@@ -116,7 +116,8 @@ class Results extends \VuFind\Search\Base\Results
                     $current = array('list' => $new);
 
                     // Inject label from configuration:
-                    $current['label'] = $current['displayName'] = $filter[$field];
+                    $current['label'] = $filter[$field];
+                    $current['field'] = $field;
 
                     // Put the current facet cluster in order based on the .ini
                     // settings, then override the display name again using .ini
@@ -130,7 +131,7 @@ class Results extends \VuFind\Search\Base\Results
         // Rewrite the sorted array with appropriate keys:
         $finalResult = array();
         foreach ($facetResult as $current) {
-            $finalResult[$current['displayName']] = $current;
+            $finalResult[$current['field']] = $current;
         }
 
         return $finalResult;
