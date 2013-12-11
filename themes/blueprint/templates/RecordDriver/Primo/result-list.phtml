@@ -82,7 +82,7 @@
 <? if (!empty($issns)){
       echo'<strong>' . $this->transEsc('ISSN:') . '</strong>' . ' ';
       foreach ($issns as $key => $issn){
-        echo '<a href="' . $this->record($this->driver)->getLink('subject', $issn) . '">' . $this->escapeHtml($issn) . '</a>';
+        echo '<a href="' . $this->record($this->driver)->getLink('issn', $issn) . '">' . $this->escapeHtml($issn) . '</a>';
         if (strcmp($issn,end($issns))){
           echo', ';
         }
