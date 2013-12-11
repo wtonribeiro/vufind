@@ -35,8 +35,8 @@
           <div class="group group<?=$i%2?>" id="group<?=$i?>">
             <div class="groupSearchHolder" id="group<?=$i?>SearchHolder">
             <?
-              if (isset($group[$i])) {
-                  $currentGroup = $group[$i]->getQueries();
+              if (isset($groups[$i])) {
+                  $currentGroup = $groups[$i]->getQueries();
                   $numRows = count($currentGroup);
               } else {
                   $currentGroup = false;
@@ -62,7 +62,7 @@
                 <div class="operators">
                 <select id="searchForm_op<?=$i?>_<?=$j?>" name="op<?=$i?>[]">
                   <? foreach ($this->options->getAdvancedOperators() as $searchVal => $searchDesc): ?>
-                    <option value="<?=$this->escapeHtml($searchVal)?>"<?=($currRow && $currRow->getHandler() == $searchVal)?' selected="selected"':''?>><?=$this->transEsc($searchDesc)?></option>
+                    <option value="<?=$this->escapeHtml($searchVal)?>"<?=($currRow && $currRow->getOperator() == $searchVal)?' selected="selected"':''?>><?=$this->transEsc($searchDesc)?></option>
                   <? endforeach; ?>
                   </select>
                 </div>
