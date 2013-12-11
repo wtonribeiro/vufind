@@ -245,12 +245,15 @@ abstract class QueryAdapter
             } elseif ($current instanceof QueryGroup) {
                 throw new \Exception('Not sure how to minify this query!');
             } else {
-                $retVal[] = array(
+                $currentArr = array(
                     'f' => $current->getHandler(),
                     'l' => $current->getString(),
-                    'o' => $current->getOperator(),
                     'b' => $operator
                 );
+                if (null !== ($op = $current->getOperator())) {
+                    $currentArr['o'] = $op;
+                }
+                $retVal[] = $currentArr;
             }
         }
         return $retVal;
