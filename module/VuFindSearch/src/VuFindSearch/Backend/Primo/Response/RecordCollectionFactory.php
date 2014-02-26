@@ -92,10 +92,6 @@ class RecordCollectionFactory implements RecordCollectionFactoryInterface
     public function factory($response)
     {
 
-$handle = fopen('/usr/local/gitPrimo/vufind/tester.txt', 'w');
-fputs($handle, print_r($response, true));
-fclose($handle);
-
         if (!is_array($response)) {
             throw new InvalidArgumentException(
                 sprintf(

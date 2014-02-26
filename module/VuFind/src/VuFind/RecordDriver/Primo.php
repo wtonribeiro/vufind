@@ -142,18 +142,6 @@ class Primo extends SolrDefault
     }
 
     /**
-     * Get the OpenURL parameters to represent this record (useful for the
-     * title attribute of a COinS span tag).
-     *
-     * @return string OpenURL parameters.
-     */
-    public function getOpenURL()
-    {
-        return isset($this->fields['openUrl'])
-            ? $this->fields['openUrl'] : parent::getOpenURL();
-    }
-
-    /**
      * Pass in a date converter
      *
      * @param \VuFind\Date\Converter $dc Date converter
@@ -177,39 +165,6 @@ class Primo extends SolrDefault
             $this->dateConverter = new \VuFind\Date\Converter();
         }
         return $this->dateConverter;
-    }
-
-    /**
-     * Get the publication dates of the record.  See also getDateSpan().
-     *
-     * @return array
-     */
-    public function getPublicationDates()
-    {
-        if (isset($this->fields['PublicationDate_xml'])
-            && is_array($this->fields['PublicationDate_xml'])
-        ) {
-            $dates = array();
-            $converter = $this->getDateConverter();
-            foreach ($this->fields['PublicationDate_xml'] as $current) {
-                if (isset($current['month']) && isset($current['year'])) {
-                    if (!isset($current['day'])) {
-                        $current['day'] = 1;
-                    }
-                    $dates[] = $converter->convertToDisplayDate(
-                        'm-d-Y',
-                        "{$current['month']}-{$current['day']}-{$current['year']}"
-                    );
-                } else if (isset($current['year'])) {
-                    $dates[] = $current['year'];
-                }
-            }
-            if (!empty($dates)) {
-                return $dates;
-            }
-        }
-        return isset($this->fields['PublicationDate']) ?
-            $this->fields['PublicationDate'] : array();
     }
 
     /**
@@ -254,20 +209,24 @@ class Primo extends SolrDefault
      * @return array
      */
     public function getURLs()
-    {
-        if (isset($this->fields['link'])) {
-            return array(
-                array(
-                    'url' => $this->fields['link'],
-                    'desc' => $this->translate('Get full text')
-                )
-            );
-        }
+    { 
         $retVal = array();
-        if (isset($this->fields['url']) && is_array($this->fields['url'])) {
-            foreach ($this->fields['url'] as $desc => $url) {
-                $retVal[] = array('url' => $url, 'desc' => $desc);
-            }
+        if (isset($this->fields['fulltext'])){
+           $desc = $this->fields['fulltext'];
+
+           if ($desc == 'fulltext'){
+              $desc = "Get Full Text";
+           }else{
+              $desc = "Request Full Text in Find It";
+           }
+        }
+
+        if (isset($this->fields['url'])) {
+            $retVal[] =
+                array(
+                    'url' => $this->fields['url'],
+                    'desc' => $this->translate($desc)
+                );
         }
         return $retVal;
     }

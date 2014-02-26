@@ -43,9 +43,9 @@
 <? if(!empty($subjects)){
      echo'<strong>' . $this->transEsc('Subjects:') . '</strong>' . ' ';
      foreach ($subjects as $key => $subject){
-       echo'<a href="' . $this->record($this->driver)->getLink('subject', $subject). '">' . $this->escapeHtml($subject) . '</a>';
+       echo'<a href="' . $this->record($this->driver)->getLink('subject', preg_replace('/ -- /', " ", $subject)). '">' . $this->escapeHtml($subject) . '</a>';
        if (strcmp($subject,end($subjects))){
-          echo', ';
+          echo'; ';
        }
      }
      echo'<br />';
@@ -84,7 +84,7 @@
       foreach ($issns as $key => $issn){
         echo '<a href="' . $this->record($this->driver)->getLink('issn', $issn) . '">' . $this->escapeHtml($issn) . '</a>';
         if (strcmp($issn,end($issns))){
-          echo', ';
+          echo'; ';
         }
       }
    }  
@@ -98,45 +98,6 @@
         <?=!empty($summAuthor) ? '<br />' : ''?>
         <?=$this->transEsc('Published') . ' ' . $this->escapeHtml($summDate[0])?>
       <? endif; ?>
-      <? $summInCollection = $this->driver->getContainingCollections(); if (!empty($summInCollection)): ?>
-        <? foreach ($summInCollection as $collId => $collText): ?>
-          <div>
-            <b><?=$this->transEsc("in_collection_label")?></b>
-            <a class="collectionLinkText" href="<?=$this->url('collection', array('id' => $collId))?>?recordID=<?=urlencode($this->driver->getUniqueID())?>">
-               <?=$this->escapeHtml($collText)?>
-            </a>
-          </div>
-        <? endforeach; ?>
-      <? endif; ?>
-    </div>
-
-    <div class="last">
-      <? if ($snippet = $this->driver->getHighlightedSnippet()) {
-           if (!empty($snippet['caption'])) {
-             echo '<strong>' . $this->transEsc($snippet['caption']) . ':</strong> ';
-           }
-           if (!empty($snippet['snippet'])) {
-             echo '<span class="quotestart">&#8220;</span>...' . $this->highlight($snippet['snippet']) . '...<span class="quoteend">&#8221;</span><br/>';
-           }
-         }
-      ?>
-      <div class="callnumAndLocation">
-        <? if ($this->driver->supportsAjaxStatus()): ?>
-          <strong class="hideIfDetailed"><?=$this->transEsc('Call Number')?>:</strong>
-          <span class="callnumber ajax_availability hide">
-            <?=$this->transEsc('Loading')?>...
-          </span><br class="hideIfDetailed"/>
-          <strong><?=$this->transEsc('Located')?>:</strong>
-          <span class="location ajax_availability hide">
-            <?=$this->transEsc('Loading')?>...
-          </span>
-          <div class="locationDetails hide"></div>
-        <? else: ?>
-          <? $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
-            <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
-          <? endif; ?>
-        <? endif; ?>
-      </div>
 
       <? /* We need to find out if we're supposed to display an OpenURL link ($openUrlActive),
             but even if we don't plan to display the link, we still want to get the $openUrl

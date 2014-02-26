@@ -114,9 +114,9 @@ class Connector
      *     onCampus    bool:   (default true)
      *     didyoumean  bool:   (default false)
      *     filterList  array:  (field, value) pairs to filter results (def null)
-     *     start       string: index of first record (default 1)
+     *     pageNumber  string: index of first record (default 1)
      *     limit       string: number of records to return (default 20)
-     *     sortField   string: value to be used by for sorting (default null)
+     *     sort        string: value to be used by for sorting (default null)
      *     returnErr   bool:   false to fail on error; true to return empty
      *                         empty result set with an error field (def true)
      *     Anything in $params not listed here will be ignored.
@@ -140,9 +140,9 @@ class Connector
             "onCampus" => true,
             "didYouMean" => false,
             "filterList" => null,
-            "start" => 1,
+            "pageNumber" => 1,
             "limit" => 20,
-            "sortField" => null,
+            "sort" => null,
             "returnErr" => true,
         );
         if (isset($params)) {
@@ -183,9 +183,9 @@ class Connector
      *     onCampus    bool:   (default true)
      *     didyoumean  bool:   (default false)
      *     filterList  array:  (field, value) pairs to filter results (def null)
-     *     start       string: index of first record (default 1)
+     *     pageNumber  string: index of first record (default 1)
      *     limit       string: number of records to return (default 20)
-     *     sortField   string: value to be used by for sorting (default null)
+     *     sort        string: value to be used by for sorting (default null)
      *     returnErr   bool:   false to fail on error; true to return empty
      *                         empty result set with an error field (def true)
      *     Anything in $args   not listed here will be ignored.
@@ -299,7 +299,7 @@ fclose($handle);
             }
 
             // QUERYSTRING: indx (start record)
-            $recordStart = $args["start"];
+            $recordStart = $args["pageNumber"];
             if($recordStart != 1){$recordStart = ($recordStart * 10) + 1;}
             $qs[] = "indx=$recordStart";
 
@@ -309,11 +309,11 @@ fclose($handle);
             // QUERYSTRING: bulkSize (limit, # of records to return)
             $qs[] = "bulkSize=" . $args["limit"];
 
-            // QUERYSTRING: sortField
+            // QUERYSTRING: sort
             // Looks like the possible values are "popularity" or "scdate"
             // omit the field for default sorting
-            if (isset($args["sortField"]) && ($args["sortField"] != 'relevance')) {
-                $qs[] = "sortField=" . $args["sortField"];
+            if (isset($args["sort"]) && ($args["sort"] != 'relevance')) {
+                $qs[] = "sortField=" . $args["sort"];
             }
 
             // QUERYSTRING: loc
