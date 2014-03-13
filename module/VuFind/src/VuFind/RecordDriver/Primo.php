@@ -212,9 +212,9 @@ class Primo extends SolrDefault
            $desc = $this->fields['fulltext'];
 
            if ($desc == 'fulltext'){
-              $desc = "Get Full Text";
+              $desc = $this->translate("Get full text");
            }else{
-              $desc = "Request Full Text in Find It";
+              $desc = $this->translate("Request full text");
            }
         }
 
