@@ -38,6 +38,12 @@ namespace VuFind\Search\Primo;
  */
 class Options extends \VuFind\Search\Base\Options
 {
+    /**
+     * Maximum number of results
+     *
+     * @var int
+     */
+    protected $resultLimit = 3980;
 
    // Search options for the user
     protected $advancedOperators = array();
@@ -122,6 +128,18 @@ class Options extends \VuFind\Search\Base\Options
                 $this->defaultSortByHandler[$key] = $val;
             }
         }
+    }
+
+    /**
+     * If there is a limit to how many search results a user can access, this
+     * method will return that limit.  If there is no limit, this will return
+     * -1.
+     *
+     * @return int
+     */
+    public function getVisibleSearchResultLimit()
+    {
+        return intval($this->resultLimit);
     }
 
     /**
