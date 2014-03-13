@@ -121,10 +121,6 @@ class Backend extends AbstractBackend
         $collection = $this->createRecordCollection($response);
         $this->injectSourceIdentifier($collection);
 
-$handle = fopen('/usr/local/gitPrimo/vufind/sort.txt', 'w');
-fputs($handle, print_r($primoQuery, true));
-fclose($handle);
-
         return $collection;
     }
 

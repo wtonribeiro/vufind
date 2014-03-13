@@ -72,9 +72,12 @@
     }
 ?>
 
-<?$language = $this->driver->getLanguages(); ?>
-<? if (!empty($language)){
-      echo'<strong>' . $this->transEsc('Language:') . '</strong>' . ' ' . $this->escapeHtml($language[0]) . '<br />';
+<?$languages = $this->driver->getLanguages(); ?>
+<? if (!empty($languages) && !empty($languages[0])){
+      echo'<strong>' . $this->transEsc('Language:') . '</strong>' . ' ';
+      foreach ($languages as $language){
+         echo $this->escapeHtml($language) . '<br />';
+      }
     }
 ?>
 

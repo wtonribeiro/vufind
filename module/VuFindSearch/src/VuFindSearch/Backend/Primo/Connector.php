@@ -206,11 +206,6 @@ class Connector
         //   multiple querystring parameters with the same key.
         $qs = array();
 
-$handle = fopen('/usr/local/gitPrimo/vufind/tester3.txt', 'w');
-fputs($handle, print_r($terms, true));
-fputs($handle, print_r($args, true));
-fclose($handle);
-
         // QUERYSTRING: query (search terms)
         // re: phrase searches, turns out we can just pass whatever we got
         //   to primo and they will interpret it correctly.

@@ -109,14 +109,21 @@ class Results extends \VuFind\Search\Base\Results
                     $new = array();
                     foreach ($current as $value => $count) {
                         $new[] = array(
-                            'value' => $value,
+                            'value' => ucwords(preg_replace('/_/', ' ', $value)),
                             'displayText' =>
-                                $translate ? $this->translate($value) : $value,
+                                $translate ? $this->translate($value) : ucwords(preg_replace('/_/', ' ',$value)),
                             'isApplied' =>
                                 $this->getParams()->hasFilter("$field:".$value),
                             'operator' => 'AND', 'count' => $count
                         );
                     }
+
+                    $cmp = function ($x, $y) {
+                               return $y['count'] - $x['count'];
+                           };
+
+                    usort($new, $cmp);
+
                     // Basic reformatting of the data:
                     $current = array('list' => $new);
 
@@ -132,16 +139,7 @@ class Results extends \VuFind\Search\Base\Results
             }
         }
 
-$handle = fopen('/usr/local/gitPrimo/vufind/unsorted.txt', 'w');
-fputs($handle, print_r($facetResult, true));
-fclose($handle);
-
         ksort($facetResult);
-
-$handle = fopen('/usr/local/gitPrimo/vufind/sorted.txt', 'w');
-fputs($handle, print_r($facetResult, true));
-fclose($handle);
-
 
         // Rewrite the sorted array with appropriate keys:
         $finalResult = array();

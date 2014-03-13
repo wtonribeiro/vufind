@@ -45,6 +45,11 @@ class Primo extends SolrDefault
      */
     protected $dateConverter = null;
 
+    public function getShortTitle()
+    {
+        return $this->getTitle();
+    }
+
     /**
      * Get the full title of the record.
      *
@@ -55,7 +60,7 @@ class Primo extends SolrDefault
         return isset($this->fields['title']) ?
             $this->fields['title'] : '';
     }
- 
+  
     /**
      * Get the authors of the record.
      *
@@ -131,9 +136,9 @@ class Primo extends SolrDefault
     }
 
     /**
-     * Get an array of all the languages associated with the record.
+     * Get the language associated with the record.
      *
-     * @return array
+     * @return String
      */
     public function getLanguages()
     {
