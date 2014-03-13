@@ -105,7 +105,6 @@ class Backend extends AbstractBackend
         $baseParams->set('pageNumber', $page);
 
         $primoQuery = $this->paramBagToPrimoQuery($baseParams);
-        var_dump($primoQuery);
         try {
             $response = $this->connector->query(
                 $this->connector->getInstitutionCode(), $primoQuery['query'],

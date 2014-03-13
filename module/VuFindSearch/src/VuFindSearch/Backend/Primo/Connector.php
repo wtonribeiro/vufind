@@ -73,7 +73,7 @@ class Connector
      */
     //TODO: do we need this? apiId goes in web/conf/conf.ini [Primo]; is passed to constructor
     //private $_config;
-    public $debug = true;
+    public $debug = false;
     /**
      * Constructor
      *
