@@ -61,6 +61,13 @@ class Connector
     public $client;
 
     /**
+     * Institution code
+     *
+     * @var string
+     */
+    protected $inst;
+
+    /**
      * Base URL for API
      * @var string
      */
@@ -80,12 +87,14 @@ class Connector
      * Sets up the Primo API Client
      *
      * @param string     $apiId  Primo API ID
+     * @param string     $inst   Institution code
      * @param HttpClient $client HTTP client
      *
      * @access public
      */
-    public function __construct($apiId, $client) {
+    public function __construct($apiId, $inst, $client) {
         $this->host = "http://$apiId.hosted.exlibrisgroup.com:1701/PrimoWebServices/xservice/search/brief?";
+        $this->inst = $inst;
         $this->client = $client;
     }
 
@@ -584,22 +593,6 @@ class Connector
      */
     public function getInstitutionCode()
     {
-        // TODO: make generic
-     	$school_ips = array('165.106'=>'BRYNM',
-                                '165.82.'=>'HAVERF',
-                                '130.58.'=>'SWARTH');
-    
-    	$ip = substr($_SERVER['REMOTE_ADDR'],0,7);
-    
-    	$inst = 'OFFCMP';
-    
-            //FOR TESTING OFF CAMPUS
-            $inst = 'SWARTH';
-    
-    	if (isset($school_ips[$ip])) {
-    	    $inst = $school_ips[$ip];
-    	}
-    	
-    	return $inst;
+        return $this->inst;
     }
 }

@@ -122,9 +122,39 @@ class PrimoBackendFactory implements FactoryInterface
             ? $this->primoConfig->General->timeout : 30;
         $client->setOptions(array('timeout' => $timeout));
 
-        $connector = new Connector($id, $client);
+        $connector = new Connector($id, $this->getInstCode(), $client);
         $connector->setLogger($this->logger);
         return $connector;
+    }
+
+    /**
+     * Determine the institution code
+     *
+     * @return string
+     */
+    protected function getInstCode()
+    {
+        $codes = isset($this->primoConfig->Institutions->code)
+            ? $this->primoConfig->Institutions->code : array();
+        $regex = isset($this->primoConfig->Institutions->regex)
+            ? $this->primoConfig->Institutions->regex : array();
+        if (empty($codes) || empty($regex) || count($codes) != count($regex)) {
+            throw new \Exception('Check [Institutions] settings in Primo.ini');
+        }
+
+        $request = $this->serviceLocator->get('Request');
+        $ip = $request->getServer('REMOTE_ADDR');
+
+        for ($i = 0; $i < count($codes); $i++) {
+            if (preg_match($regex[$i], $ip)) {
+                return $codes[$i];
+            }
+        }
+
+        throw new \Exception(
+            'Could not determine institution code. [Institutions] settings '
+            . 'should include a catch-all rule at the end.'
+        );
     }
 
     /**
