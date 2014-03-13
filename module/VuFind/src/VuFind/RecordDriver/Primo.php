@@ -240,4 +240,16 @@ class Primo extends SolrDefault
         return $this->fields['recordid'];
     }
 
+    /**
+     * Get an array of strings representing citation formats supported
+     * by this record's data (empty if none).  For possible legal values,
+     * see /application/themes/root/helpers/Citation.php, getCitation()
+     * method.
+     *
+     * @return array Strings representing citation formats.
+     */
+    protected function getSupportedCitationFormats()
+    {
+        return array();
+    }
 }
