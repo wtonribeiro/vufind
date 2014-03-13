@@ -70,6 +70,27 @@ class Params extends \VuFind\Search\Base\Params
     }
 
     /**
+     * Format a single filter for use in getFilterList().
+     *
+     * @param string $field     Field name
+     * @param string $value     Field value
+     * @param string $operator  Operator (AND/OR/NOT)
+     * @param bool   $translate Should we translate the label?
+     *
+     * @return array
+     */
+    protected function formatFilterListEntry($field, $value, $operator, $translate)
+    {
+        $result
+            = parent::formatFilterListEntry($field, $value, $operator, $translate);
+        if (!$translate) {
+            $result['displayText']
+                = ucwords(str_replace('_', ' ', $result['displayText']));
+        }
+        return $result;
+    }
+
+    /**
      * Set up filters based on VuFind settings.
      *
      * @param ParamBag $params Parameter collection to update
