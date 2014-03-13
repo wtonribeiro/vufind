@@ -109,7 +109,7 @@ class Results extends \VuFind\Search\Base\Results
                     $new = array();
                     foreach ($current as $value => $count) {
                         $new[] = array(
-                            'value' => ucwords(preg_replace('/_/', ' ', $value)),
+                            'value' => $value,
                             'displayText' =>
                                 $translate ? $this->translate($value) : ucwords(preg_replace('/_/', ' ',$value)),
                             'isApplied' =>
