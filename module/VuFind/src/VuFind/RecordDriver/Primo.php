@@ -185,18 +185,10 @@ class Primo extends SolrDefault
      */
     public function getThumbnail($size = 'small')
     {
-        $formats = $this->getFormats();
-        if (($isbn = $this->getCleanISBN()) || !empty($formats)) {
-            $params = array('size' => $size);
-            if ($isbn) {
-                $params['isn'] = $isbn;
-            }
-            if (!empty($formats)) {
-                $params['contenttype'] = $formats[0];
-            }
-            return $params;
+        if ($isbn = $this->getCleanISBN()) {
+            return array('size' => $size, 'isn' => $isbn);
         }
-        return false;
+        return array('size' => $size, 'contenttype' => 'JournalArticle');
     }
 
     /**
