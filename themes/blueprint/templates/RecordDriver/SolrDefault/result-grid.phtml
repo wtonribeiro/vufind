@@ -1,5 +1,5 @@
-<div class="gridRecordBox source<?=$this->escapeHtml($this->driver->getResourceSource())?> recordId<?=$this->driver->supportsAjaxStatus()?' ajaxItemId':''?>">
-    <input type="hidden" value="<?=$this->escapeHtml($this->driver->getUniqueID())?>" class="hiddenId" />
+<div class="gridRecordBox source<?=$this->escapeHtmlAttr($this->driver->getResourceSource())?> recordId<?=$this->driver->supportsAjaxStatus()?' ajaxItemId':''?>">
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
     <span class="gridImageBox">
       <a href="<?=$this->recordLink()->getUrl($this->driver)?>">
         <? if ($summThumb = $this->record($this->driver)->getThumbnail('large')): ?>
@@ -47,4 +47,4 @@
     </div>
 </div>
 
-<?=$openUrl?'<span class="Z3988" title="'.$this->escapeHtml($openUrl).'"></span>':''?>
+<?=$openUrl?'<span class="Z3988" title="'.$this->escapeHtmlAttr($openUrl).'"></span>':''?>
