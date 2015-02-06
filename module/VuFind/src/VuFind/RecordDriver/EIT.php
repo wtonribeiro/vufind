@@ -27,8 +27,6 @@
  */
 namespace VuFind\RecordDriver;
 
-use Zend\Log\LoggerInterface;
-
 /**
  * Model for records retrieved via EBSCO's EIT API.
  *
@@ -38,8 +36,10 @@ use Zend\Log\LoggerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class EIT extends SolrDefault
+class EIT extends SolrDefault implements \Zend\Log\LoggerAwareInterface
 {
+    use \VuFind\Log\LoggerAwareTrait;
+
     /**
      * Used for identifying search backends
      *
@@ -48,44 +48,11 @@ class EIT extends SolrDefault
     protected $sourceIdentifier = 'EIT';
 
     /**
-     * Logger, if any.
-     *
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * Reference to controlInfo section of fields, for readability
      *
      * @var array
      */
     protected $controlInfo;
-
-    /**
-     * Set the Logger.
-     *
-     * @param LoggerInterface $logger Logger
-     *
-     * @return void
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * Log a debug message.
-     *
-     * @param string $msg Message to log.
-     *
-     * @return void
-     */
-    protected function debug($msg)
-    {
-        if ($this->logger) {
-            $this->logger->debug($msg);
-        }
-    }
 
     /**
      * Set raw data to initialize the object.
